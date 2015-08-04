@@ -211,9 +211,216 @@ function parsePathD(pathData) {
         path += " ";
     }
 
+    warnings.pushUnique(path);
+
+    path = generatePath(path);
+    warnings.pushUnique(path);
+
+
+
     return wordwrap(path.trim(), 80, "\n");
 }
 
+function generatePath(path) {
+    console.log('{0}'.f(path))
+    resetCursor();
+    result = "";
+    while ((movement = getNextMovement(path)) != EOF) {
+        result = result.concat(movement);
+    }
+    return result;
+}
+
+const EOF = -1;
+
+var currentIndex = 0;
+
+function getNextMovement(path) {
+    var command = getNextCommand(path);
+    if (command == EOF) {
+        return EOF;
+    }
+
+    var result = "";
+    result = result.concat(command);
+
+    switch (command) {
+        case 'H':
+        case 'h':
+            result = concatNumber(result, getNextX(command, path));
+            break;
+
+        case 'V':
+        case 'v':
+            result = concatNumber(result, getNextY(command, path));
+            break;
+
+        case 'M':
+        case 'm':
+        case 'L':
+        case 'l':
+        case 'T':
+        case 't':
+            result = concatNumber(result, getNextX(command, path));
+            result = concatNumber(result, getNextY(command, path));
+            break;
+
+        case 'C':
+        case 'c':
+            result = concatNumber(result, getNextX(command, path));
+            result = concatNumber(result, getNextY(command, path));
+            result = concatNumber(result, getNextX(command, path));
+            result = concatNumber(result, getNextY(command, path));
+            result = concatNumber(result, getNextX(command, path));
+            result = concatNumber(result, getNextY(command, path));
+            break;
+
+        case 'S':
+        case 's':
+        case 'Q':
+        case 'q':
+            result = concatNumber(result, getNextX(command, path));
+            result = concatNumber(result, getNextY(command, path));
+            result = concatNumber(result, getNextX(command, path));
+            result = concatNumber(result, getNextY(command, path));
+            break;
+
+        case 'A':
+        case 'a':
+            result = concatNumber(result, getNextX(command, path));
+            result = concatNumber(result, getNextY(command, path));
+            result = concatNumber(result, getNextNumber(path));
+            result = concatNumber(result, getNextNumber(path));
+            result = concatNumber(result, getNextNumber(path));
+            result = concatNumber(result, getNextX(command, path));
+            result = concatNumber(result, getNextY(command, path));
+            break;
+
+        case 'Z':
+        case 'z':
+            break;
+
+        default:
+            throw new Error('unknown command {0}'.f(command));
+            break;
+    }
+
+    console.log(result);
+    return result;
+}
+
+function concatNumber(str, num) {
+    if (isDigit(lastChar(str)) && num >= 0) {
+        str = str.concat(',');
+    }
+    str = str.concat(num.round(1));
+    return str;
+}
+
+// http://stackoverflow.com/a/19722641/4542662
+Number.prototype.round = function(places) {
+      return +(Math.round(this + "e+" + places)  + "e-" + places);
+}
+
+function lastChar(str) {
+    return str.charAt(str.length - 1)
+}
+
+function getNextCommand(path) {
+    advanceCursorToNextValidChar(path);
+    var c = getNextChar(path);
+    if (isAlphabet(c) || c == EOF) {
+        return c;
+    }
+}
+
+function getNextNumber(path) {
+    advanceCursorToNextValidChar(path);
+    var startCursor = getCurrentCursor();
+    var c = peekNextChar(path);
+    if (c == '-') {
+        advanceCursor();
+        c = peekNextChar(path);
+    }
+    while (isDigitOrPoint(c)) {
+        advanceCursor();
+        c = peekNextChar(path);
+    }
+
+    str = path.substr(startCursor, getCurrentCursor() - startCursor);
+    return Number(str);
+}
+
+function getNextX(command, path) {
+    var x = getNextNumber(path);
+    if (isUpperCase(command)) {
+        x -= viewBoxX;
+    }
+    return x;
+}
+
+function getNextY(command, path) {
+    var y = getNextNumber(path);
+    if (isUpperCase(command)) {
+        y -= viewBoxY;
+    }
+    return y;
+}
+
+function advanceCursorToNextValidChar(path) {
+    var c = peekNextChar(path);
+    while (c == ',' || c == ' ') {
+        advanceCursor();
+        c = peekNextChar(path);
+    }
+}
+
+
+function peekNextChar(path) {
+    if (currentIndex >= path.length) {
+        return EOF;
+    }
+
+    return path.charAt(currentIndex);
+}
+
+function resetCursor() {
+    currentIndex = 0;
+}
+
+function advanceCursor() {
+    currentIndex ++;
+}
+
+function getCurrentCursor() {
+    return currentIndex;
+}
+
+function getNextChar(path) {
+    var c = peekNextChar(path);
+    advanceCursor();
+    return c;
+}
+
+function isDigit(c) {
+    return c >= '0' && c <= '9'
+}
+
+function isDigitOrPoint(c) {
+    return isDigit(c) || c == '.'
+}
+
+function isUpperCase(c) {
+    return c >= 'A' && c <= 'Z'
+}
+
+function isLowerCase(c) {
+    return c >= 'a' && c <= 'z'
+}
+
+function isAlphabet(c) {
+    return isLowerCase(c) || isUpperCase(c)
+}
 
 function parseStyles(path) {
     //Convert attributes to style
@@ -397,6 +604,7 @@ function fixNumberFormatting(path) {
     return path.replace(/(\.\d+)(\.\d+)\s?/g, "\$1 \$2 ");
 }
 
+var viewBoxX, viewBoxY;
 function getDimensions(svg) {
     var widthAttr = svg.attr("width");
     var heightAttr = svg.attr("height");
@@ -411,9 +619,14 @@ function getDimensions(svg) {
         }
     } else {
         var viewBoxAttrParts = viewBoxAttr.split(/[,\s]+/);
+        viewBoxX = viewBoxAttrParts[0];
+        viewBoxY = viewBoxAttrParts[1];
+        warnings.pushUnique('viewbox ' + viewBoxAttr);
+        /*
         if (viewBoxAttrParts[0] > 0 || viewBoxAttrParts[1] > 0) {
             warnings.pushUnique("viewbox minx/miny is other than 0 (not supported)");
         }
+        */
         return {width: viewBoxAttrParts[2], height: viewBoxAttrParts[3]};
     }
 
