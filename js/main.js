@@ -642,7 +642,8 @@ function generateAttr(name, val, groupLevel, def, end) {
     if (typeof val === "undefined" || val == def) return "";
     if (name === "fillColor") val = "#FFFFFF";
     return INDENT.repeat(groupLevel + 2) + 'android:{0}="{1}"\n'.f(name, val)
-        + INDENT.repeat(groupLevel + 2) + 'app:vc_{0}="{1}"{2}\n'.f(name, val, end ? ' />' : '');
+        + INDENT.repeat(groupLevel + 2) + 'app:vc_{0}="{1}"{2}\n'.f(name, val,
+                end ? '\n' + INDENT.repeat(groupLevel + 2) + '/>' : '');
 }
 
 function selectAll() {
