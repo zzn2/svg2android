@@ -211,13 +211,6 @@ function parsePathD(pathData) {
         path += " ";
     }
 
-    warnings.pushUnique(path);
-
-    path = generatePath(path);
-    warnings.pushUnique(path);
-
-
-
     return wordwrap(path.trim(), 80, "\n");
 }
 
@@ -228,6 +221,7 @@ function generatePath(path) {
     while ((movement = getNextMovement(path)) != EOF) {
         result = result.concat(movement);
     }
+    console.log(result);
     return result;
 }
 
@@ -369,7 +363,7 @@ function getNextY(command, path) {
 
 function advanceCursorToNextValidChar(path) {
     var c = peekNextChar(path);
-    while (c == ',' || c == ' ') {
+    while (c == ',' || c == ' ' || c == '\r' || c == '\n') {
         advanceCursor();
         c = peekNextChar(path);
     }
@@ -476,6 +470,12 @@ function printPath(pathData, stylesArray, groupLevel) {
     if (pathData == null) {
         return;
     }
+
+    warnings.pushUnique(pathData);
+
+    pathData = generatePath(pathData);
+    warnings.pushUnique(pathData);
+
 
     if (styles.hasOwnProperty("transform")) {
         warnings.pushUnique("transforms on path are not supported, use option <i>Bake transforms into path</i>")
