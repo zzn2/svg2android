@@ -214,7 +214,7 @@ function parsePathD(pathData) {
     return wordwrap(path.trim(), 80, "\n");
 }
 
-function generatePath(path) {
+function offsetPath(path) {
     console.log('{0}'.f(path))
     resetCursor();
     result = "";
@@ -473,7 +473,7 @@ function printPath(pathData, stylesArray, groupLevel) {
 
     warnings.pushUnique(pathData);
 
-    pathData = generatePath(pathData);
+    pathData = offsetPath(pathData);
     warnings.pushUnique(pathData);
 
 
