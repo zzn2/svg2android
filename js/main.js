@@ -261,12 +261,10 @@ function getNextMovement(path) {
 
         case 'C':
         case 'c':
-            result = concatNumber(result, getNextX(command, path));
-            result = concatNumber(result, getNextY(command, path));
-            result = concatNumber(result, getNextX(command, path));
-            result = concatNumber(result, getNextY(command, path));
-            result = concatNumber(result, getNextX(command, path));
-            result = concatNumber(result, getNextY(command, path));
+            while (hasNextNumber(path)) {
+                result = concatNumber(result, getNextX(command, path));
+                result = concatNumber(result, getNextY(command, path));
+            }
             break;
 
         case 'S':
@@ -318,6 +316,12 @@ Number.prototype.round = function(places) {
 
 function lastChar(str) {
     return str.charAt(str.length - 1)
+}
+
+function hasNextNumber(path) {
+    advanceCursorToNextValidChar(path);
+    var c = peekNextChar(path);
+    return isDigit(c) || c == '-';
 }
 
 function getNextCommand(path) {
