@@ -321,7 +321,7 @@ function lastChar(str) {
 function hasNextNumber(path) {
     advanceCursorToNextValidChar(path);
     var c = peekNextChar(path);
-    return isDigit(c) || c == '-';
+    return isDigitOrPoint(c) || c == '-';
 }
 
 function getNextCommand(path) {
