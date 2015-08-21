@@ -491,10 +491,7 @@ function printPath(pathData, stylesArray, groupLevel) {
         return;
     }
 
-    warnings.pushUnique(pathData);
-
     pathData = offsetPath(pathData);
-    warnings.pushUnique(pathData);
 
 
     if (styles.hasOwnProperty("transform")) {
