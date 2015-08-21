@@ -241,12 +241,16 @@ function getNextMovement(path) {
     switch (command) {
         case 'H':
         case 'h':
-            result = concatNumber(result, getNextX(command, path));
+            while (hasNextNumber(path)) {
+                result = concatNumber(result, getNextX(command, path));
+            }
             break;
 
         case 'V':
         case 'v':
-            result = concatNumber(result, getNextY(command, path));
+            while (hasNextNumber(path)) {
+                result = concatNumber(result, getNextY(command, path));
+            }
             break;
 
         case 'M':
@@ -255,13 +259,19 @@ function getNextMovement(path) {
         case 'l':
         case 'T':
         case 't':
-            result = concatNumber(result, getNextX(command, path));
-            result = concatNumber(result, getNextY(command, path));
+            while (hasNextNumber(path)) {
+                result = concatNumber(result, getNextX(command, path));
+                result = concatNumber(result, getNextY(command, path));
+            }
             break;
 
         case 'C':
         case 'c':
             while (hasNextNumber(path)) {
+                result = concatNumber(result, getNextX(command, path));
+                result = concatNumber(result, getNextY(command, path));
+                result = concatNumber(result, getNextX(command, path));
+                result = concatNumber(result, getNextY(command, path));
                 result = concatNumber(result, getNextX(command, path));
                 result = concatNumber(result, getNextY(command, path));
             }
@@ -271,21 +281,25 @@ function getNextMovement(path) {
         case 's':
         case 'Q':
         case 'q':
-            result = concatNumber(result, getNextX(command, path));
-            result = concatNumber(result, getNextY(command, path));
-            result = concatNumber(result, getNextX(command, path));
-            result = concatNumber(result, getNextY(command, path));
+            while (hasNextNumber(path)) {
+                result = concatNumber(result, getNextX(command, path));
+                result = concatNumber(result, getNextY(command, path));
+                result = concatNumber(result, getNextX(command, path));
+                result = concatNumber(result, getNextY(command, path));
+            }
             break;
 
         case 'A':
         case 'a':
-            result = concatNumber(result, getNextX(command, path));
-            result = concatNumber(result, getNextY(command, path));
-            result = concatNumber(result, getNextNumber(path));
-            result = concatNumber(result, getNextNumber(path));
-            result = concatNumber(result, getNextNumber(path));
-            result = concatNumber(result, getNextX(command, path));
-            result = concatNumber(result, getNextY(command, path));
+            while (hasNextNumber(path)) {
+                result = concatNumber(result, getNextX(command, path));
+                result = concatNumber(result, getNextY(command, path));
+                result = concatNumber(result, getNextNumber(path));
+                result = concatNumber(result, getNextNumber(path));
+                result = concatNumber(result, getNextNumber(path));
+                result = concatNumber(result, getNextX(command, path));
+                result = concatNumber(result, getNextY(command, path));
+            }
             break;
 
         case 'Z':
