@@ -456,6 +456,8 @@ function parseStyles(path) {
                     }
                 }
             }
+        } else if (name == "class") {
+            warnings.pushUnique("unsupported class " + value);
         } else {
             stylesArray[name] = value;
         }
