@@ -319,7 +319,7 @@ function concatNumber(str, num) {
     if (isDigit(lastChar(str)) && num >= 0) {
         str = str.concat(',');
     }
-    str = str.concat(num.round(1));
+    str = str.concat(num.round(3));
     return str;
 }
 
